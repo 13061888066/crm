@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mage.crm.dao.SaleChanceDao">
+
+    <resultMap id="BaseResultMap" type="com.mage.crm.vo.SaleChance">
+        <id column="id" property="id"/>
+        <result column="chance_source" property="chanceSource"/>
+        <result column="customer_name" property="customerName"/>
+        <result column="cgjl" property="cgjl"/>
+        <result column="overview" property="overview"/>
+        <result column="link_man" property="linkMan"/>
+        <result column="link_phone" property="linkPhone"/>
+        <result column="description" property="description"/>
+        <result column="create_man" property="createMan"/>
+        <result column="assign_man" property="assignMan"/>
+        <result column="assign_time" property="assignTime"/>
+        <result column="state" property="state"/>
+        <result column="dev_result" property="devResult"/>
+        <result column="is_valid" property="isValid"/>
+        <result column="create_date" property="createDate"/>
+        <result column="update_date" property="updateDate"/>
+    </resultMap>
+
+    <sql id="sale_chance_column">
+        id,
+        customer_name,
+        chance_source,
+        cgjl,overview,
+        link_man,
+        link_phone,
+        description,create_man,
+        assign_man,
+        assign_time,
+        state,dev_result,
+        is_valid,
+        create_date,
+        update_date
+    </sql>
+    <select id="querySaleChancesByParams" parameterType="saleChanceQuery" resultMap="BaseResultMap">
+        SELECT
+        <include refid="sale_chance_column"/>
+        FROM
+        t_sale_chance
+        <where>
+            is_valid=1
+            <if test="createMan!=null and createMan!=''">
+                AND create_man LIKE concat('%',#{createMan},'%')
+            </if>
+            <if test="customerName!=null and customerName!=''">
+                AND customer_name LIKE concat('%',#{customerName},'%')
+            </if>
+            <if test="state!=null and state!=''">
+                AND state =#{state}
+            </if>
+            <if test="createDate!=null and createDate!=''">
+                <![CDATA[
+            AND create_date <=#{createDate}
+         ]]>
+            </if>
+        </where>
+    </select>
+
+    <select id="querySaleChancesById" parameterType="int" resultMap="BaseResultMap">
+        SELECT
+        <include refid="sale_chance_column"/>
+        FROM
+        t_sale_chance
+        where is_valid=1 and id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="saleChance">
+        insert into t_sale_chance
+        (chance_source,customer_name,cgjl,overview,link_man,link_phone,description,create_man,
+        assign_man,assign_time,state,dev_result,is_valid,create_date,update_date)
+        values(#{chanceSource},#{customerName},#{cgjl},#{overview},#{linkMan},#{linkPhone},
+        #{description},#{createMan},#{assignMan},#{assignTime},#{state},#{devResult},#{isValid},
+        #{createDate},#{updateDate})
+    </insert>
+
+    <update id="update" parameterType="saleChance">
+        update
+        t_sale_chance
+        set
+        chance_source=#{chanceSource},
+        customer_name=#{customerName},
+        cgjl=#{cgjl},
+        overview=#{overview},
+        link_man=#{linkMan},
+        link_phone=#{linkPhone},
+        description=#{description},
+        assign_man=#{assignMan},
+        assign_time=#{assignTime},
+        state=#{state},
+        update_date=#{updateDate}
+        where id=#{id} and is_valid=1
+    </update>
+
+    <update id="delete">
+        update t_sale_chance set is_valid=0 where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <update id="updateDevResult">
+        update t_sale_chance  set dev_result=#{dev},update_date=now()
+        where id = #{id}
+    </update>
+
+</mapper>

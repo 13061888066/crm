@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mage.crm.dao.CustomerDao">
+    <resultMap id="BaseResultMap" type="com.mage.crm.vo.Customer">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="khno" property="khno"/>
+        <result column="name" property="name"/>
+        <result column="area" property="area"/>
+        <result column="cus_manager" property="cusManager"/>
+        <result column="level" property="level"/>
+        <result column="myd" property="myd"/>
+        <result column="xyd" property="xyd"/>
+        <result column="address" property="address"/>
+        <result column="post_code" property="postCode"/>
+        <result column="phone" property="phone"/>
+        <result column="fax" property="fax"/>
+        <result column="web_site" property="webSite"/>
+        <result column="yyzzzch" property="yyzzzch"/>
+        <result column="fr" property="fr"/>
+        <result column="zczj" property="zczj"/>
+        <result column="nyye" property="nyye"/>
+        <result column="khyh" property="khyh"/>
+        <result column="khzh" property="khzh"/>
+        <result column="dsdjh" property="dsdjh"/>
+        <result column="gsdjh" property="gsdjh"/>
+        <result column="state" property="state"/>
+        <result column="is_valid" property="isValid"/>
+        <result column="create_date" property="createDate"/>
+        <result column="update_date" property="updateDate"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, khno, name, area, cus_manager as cusManager, level, myd, xyd, address, post_code as postCode, phone, fax,
+        web_site as webSite, yyzzzch, fr, zczj, nyye, khyh, khzh, dsdjh, gsdjh, state, is_valid, create_date,
+        update_date
+    </sql>
+
+
+    <select id="queryAllCustomers" resultType="customer">
+        select
+            id,name
+        from
+            t_customer
+        where is_valid = 1 and state = 0
+    </select>
+
+    <select id="queryCustomerById" resultType="int" resultMap="BaseResultMap">
+        select
+            id,khno,name
+        from
+            t_customer
+        where is_valid = 1 and id=#{id}
+    </select>
+
+    <select id="queryCustomersByParams" parameterType="customerQuery" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        t_customer
+        <where>
+            is_valid=1
+            <if test="khno!=null and khno!=''">
+                and khno like concat('%',#{khno},'%')
+            </if>
+            <if test="name!=null and name!=''">
+                and name like concat('%',#{name},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="queryCustomersContribution" parameterType="customerQuery" resultType="customerDto">
+        SELECT
+        c.NAME,
+        sum( od.sum ) total
+        FROM
+        t_customer c
+        JOIN t_customer_order co ON c.id = co.cus_id
+        JOIN t_order_details od ON co.order_no = od.order_id
+        WHERE
+        c.is_valid = 1
+        AND co.is_valid = 1
+        AND od.is_valid = 1
+        <if test="name!=null and name!=''">
+            and name like concat('%',#{name},'%')
+        </if>
+        GROUP BY
+        c.id
+    </select>
+
+    <select id="queryCustomerGC"  resultType="customerDto">
+        select level,count(*) count from t_customer group by level
+    </select>
+
+    <insert id="insert" parameterType="customer">
+        insert into t_customer (id, khno, name,
+        area, cus_manager, level,
+        myd, xyd, address,
+        post_code, phone, fax,
+        web_site, yyzzzch, fr,
+        zczj, nyye, khyh, khzh,
+        dsdjh, gsdjh, state,
+        is_valid, create_date, update_date
+        )
+        values (#{id,jdbcType=INTEGER}, #{khno,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
+        #{area,jdbcType=VARCHAR}, #{cusManager,jdbcType=VARCHAR}, #{level,jdbcType=VARCHAR},
+        #{myd,jdbcType=VARCHAR}, #{xyd,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR},
+        #{postCode,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{fax,jdbcType=VARCHAR},
+        #{webSite,jdbcType=VARCHAR}, #{yyzzzch,jdbcType=VARCHAR}, #{fr,jdbcType=VARCHAR},
+        #{zczj,jdbcType=VARCHAR}, #{nyye,jdbcType=VARCHAR}, #{khyh,jdbcType=VARCHAR}, #{khzh,jdbcType=VARCHAR},
+        #{dsdjh,jdbcType=VARCHAR}, #{gsdjh,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER},
+        #{isValid,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}
+        )
+    </insert>
+
+    <update id="update" parameterType="customer">
+        update t_customer
+        <set>
+            <if test="khno != null">
+                khno = #{khno},
+            </if>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="area != null">
+                area = #{area},
+            </if>
+            <if test="cusManager != null">
+                cus_manager = #{cusManager},
+            </if>
+            <if test="level != null">
+                level = #{level},
+            </if>
+            <if test="myd != null">
+                myd = #{myd},
+            </if>
+            <if test="xyd != null">
+                xyd = #{xyd},
+            </if>
+            <if test="address != null">
+                address = #{address},
+            </if>
+            <if test="postCode != null">
+                post_code = #{postCode},
+            </if>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+            <if test="fax != null">
+                fax = #{fax},
+            </if>
+            <if test="webSite != null">
+                web_site = #{webSite},
+            </if>
+            <if test="yyzzzch != null">
+                yyzzzch = #{yyzzzch},
+            </if>
+            <if test="fr != null">
+                fr = #{fr},
+            </if>
+            <if test="zczj != null">
+                zczj = #{zczj},
+            </if>
+            <if test="nyye != null">
+                nyye = #{nyye},
+            </if>
+            <if test="khyh != null">
+                khyh = #{khyh},
+            </if>
+            <if test="khzh != null">
+                khzh = #{khzh},
+            </if>
+            <if test="dsdjh != null">
+                dsdjh = #{dsdjh},
+            </if>
+            <if test="gsdjh != null">
+                gsdjh = #{gsdjh},
+            </if>
+            <if test="state != null">
+                state = #{state},
+            </if>
+            <if test="isValid != null">
+                is_valid = #{isValid},
+            </if>
+            <if test="createDate != null">
+                create_date = #{createDate},
+            </if>
+            <if test="updateDate != null">
+                update_date = #{updateDate},
+            </if>
+        </set>
+        where id = #{id} and is_valid = 1
+    </update>
+
+
+    <delete id="delete">
+        update t_customer set is_valid = 0
+        where id in
+        <foreach collection="array" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <update id="updateCustomerState" parameterType="string">
+        update t_customer
+        set state=1
+        where khno = #{cusNo} and is_valid=1
+    </update>
+
+</mapper>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mage.crm.dao.OrderDetailDao">
+    <resultMap id="BaseResultMap" type="com.mage.crm.vo.OrderDetail">
+        <id column="id"  property="id" />
+        <result column="order_id" property="orderId" />
+        <result column="goods_name" property="goodsName" />
+        <result column="goods_num"  property="goodsNum" />
+        <result column="unit" property="unit" />
+        <result column="price" property="price" />
+        <result column="sum" property="sum" />
+        <result column="create_date" property="createDate" />
+        <result column="update_date" property="updateDate" />
+        <result column="is_valid" property="isValid" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, order_id, goods_name, goods_num, unit, price, sum, create_date, update_date, is_valid
+    </sql>
+
+    <select id="queryOrderDetailsByOrderId" parameterType="int" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from t_order_details
+        where order_id = #{orderId} and is_valid =1
+    </select>
+
+</mapper>

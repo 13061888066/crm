@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mage.crm.dao.RoleDao">
+
+    <resultMap id="BaseResultMap" type="com.mage.crm.vo.Role">
+        <id column="id" property="id"/>
+        <result column="role_name" property="roleName"/>
+        <result column="role_remark" property="roleRemark"/>
+        <result column="is_valid" property="isValid"/>
+        <result column="create_date" property="createDate"/>
+        <result column="update_date" property="updateDate"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, role_name, role_remark, is_valid, create_date, update_date
+    </sql>
+
+
+    <select id="queryAllRoles" resultMap="BaseResultMap">
+        select id,role_name as'roleName' from t_role where is_valid =1
+    </select>
+
+    <select id="queryRolesByParams" parameterType="roleQuery" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from t_role
+        <where>
+            is_valid = 1
+            <if test="roleName !=null and roleName !=''">
+                and role_name like concat('%',#{roleName},'%')
+            </if>
+        </where>
+    </select>
+
+
+    <select id="queryRoleByRoleName" parameterType="string" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from t_role
+        where is_valid = 1 and role_name =#{roleName}
+    </select>
+
+    <select id="queryRoleById" parameterType="int" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from t_role
+        where is_valid = 1 and id =#{id}
+    </select>
+
+    <insert id="insert" parameterType="role">
+        insert into t_role(role_name,role_remark,create_date,update_date,is_valid)
+        values(#{roleName},#{roleRemark},#{createDate},#{updateDate},#{isValid})
+    </insert>
+
+    <update id="update" parameterType="role">
+        update t_role set role_name=#{roleName},role_remark=#{roleRemark}
+        where id=#{id} and is_valid=1
+    </update>
+
+    <update id="delete" parameterType="int">
+        update t_role set is_valid=0
+        where id=#{id}
+    </update>
+</mapper>

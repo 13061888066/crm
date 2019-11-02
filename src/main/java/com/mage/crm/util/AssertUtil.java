@@ -1,0 +1,19 @@
+package com.mage.crm.util;
+
+import com.mage.crm.base.CrmConstant;
+import com.mage.crm.base.exceptions.ParamsException;
+
+public class AssertUtil {
+
+    public static void isTrue(boolean flag,String msg){
+        if (flag){
+            throw  new ParamsException(CrmConstant.OPS_FAILED_CODE,msg);
+        }
+    }
+
+    public static void isTrue (Boolean flag,Integer code,String msg){
+        if (flag){
+            throw new ParamsException(code,msg);
+        }
+    }
+}
