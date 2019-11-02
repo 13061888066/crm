@@ -26,6 +26,7 @@ public class Customer extends BaseVo{
     private String dsdjh;
     private String gsdjh;
     private Integer state;
+    private Integer test;
 
     public Integer getId() {
         return id;
